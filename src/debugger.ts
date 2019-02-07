@@ -6,8 +6,7 @@ import {
 } from 'vscode-debugadapter';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { basename } from 'path';
-import { LibSdbTypes, LibSdbConstants } from 'solidity-debugger';
-import { SdbRuntimeInterface } from './runtime-interface';
+import RuntimeInterface from './runtime-interface';
 
 
 /**
@@ -25,6 +24,8 @@ interface LaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
   host?: string;
   /** change which port talks to sdb **/
   port?: number;
+
+  txHash: string;
 }
 
 class SolidityDebugSession extends DebugSession {
@@ -33,7 +34,7 @@ class SolidityDebugSession extends DebugSession {
   private static THREAD_ID = 1;
 
   // a Mock runtime (or debugger)
-  private _runtime: SdbRuntimeInterface;
+  private _runtime: RuntimeInterface;
 
   private _scopes: Array<Scope>;
 
@@ -48,13 +49,13 @@ class SolidityDebugSession extends DebugSession {
     this.setDebuggerLinesStartAt1(false);
     this.setDebuggerColumnsStartAt1(false);
 
-    this._runtime = new SdbRuntimeInterface();
+    this._runtime = new RuntimeInterface();
 
     this._scopes = new Array<Scope>();
-    this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.local.name, LibSdbConstants.ScopeTypes.local.frame, false));
-    this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.state.name, LibSdbConstants.ScopeTypes.state.frame, false));
-    // TODO: this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.global.name, LibSdbConstants.ScopeTypes.global.frame, false));
-    this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.dev.name, LibSdbConstants.ScopeTypes.dev.frame, false));
+    // this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.local.name, LibSdbConstants.ScopeTypes.local.frame, false));
+    // this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.state.name, LibSdbConstants.ScopeTypes.state.frame, false));
+    // // TODO: this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.global.name, LibSdbConstants.ScopeTypes.global.frame, false));
+    // this._scopes.push(new Scope(LibSdbConstants.ScopeTypes.dev.name, LibSdbConstants.ScopeTypes.dev.frame, false));
 
     // setup event handlers
     this._runtime.on('stopOnEntry', () => {

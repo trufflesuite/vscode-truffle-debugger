@@ -147,7 +147,7 @@ class SolidityDebugSession extends DebugSession {
       const l = clientLines[i];
       const debuggerBreakpoint = await this._runtime.setBreakpoint(path, this.convertClientLineToDebugger(l));
       if (debuggerBreakpoint) {
-        const bp = <DebugProtocol.Breakpoint> new Breakpoint(debuggerBreakpoint.verified, this.convertDebuggerLineToClient(debuggerBreakpoint.line));
+        const bp = <DebugProtocol.Breakpoint>new Breakpoint(debuggerBreakpoint.verified, this.convertDebuggerLineToClient(debuggerBreakpoint.line));
         bp.id = debuggerBreakpoint.id;
         actualBreakpoints.push(bp);
       }
@@ -216,11 +216,11 @@ class SolidityDebugSession extends DebugSession {
     this.sendResponse(response);
   }
 
-  protected reverseContinueRequest(response: DebugProtocol.ReverseContinueResponse, args: DebugProtocol.ReverseContinueArguments) : void {
+  protected reverseContinueRequest(response: DebugProtocol.ReverseContinueResponse, args: DebugProtocol.ReverseContinueArguments): void {
     // backward continue until breakpoint
     this._runtime.continueReverse();
     this.sendResponse(response);
-   }
+  }
 
   protected nextRequest(response: DebugProtocol.NextResponse, args: DebugProtocol.NextArguments): void {
     // forward 1 step

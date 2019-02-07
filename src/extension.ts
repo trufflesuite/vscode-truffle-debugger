@@ -8,21 +8,20 @@ import * as vscode from 'vscode';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-	// register a configuration provider for 'sdb' debug type
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider("truffle-debugger", new TruffleDebuggerConfigurationProvider()));
+  // register a configuration provider for 'sdb' debug type
+  context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider("truffle-debugger", new TruffleDebuggerConfigurationProvider()));
 }
 
 export function deactivate() {
-	// nothing to do
+  // nothing to do
 }
 
 class TruffleDebuggerConfigurationProvider implements vscode.DebugConfigurationProvider {
-
-	/**
-	 * Massage a debug configuration just before a debug session is being launched,
-	 * e.g. add all missing attributes to the debug configuration.
-	 */
-	resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
-		return config;
-	}
+  /**
+   * Massage a debug configuration just before a debug session is being launched,
+   * e.g. add all missing attributes to the debug configuration.
+   */
+  resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
+    return config;
+  }
 }

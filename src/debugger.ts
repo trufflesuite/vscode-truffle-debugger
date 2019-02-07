@@ -7,7 +7,7 @@ import {
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { basename } from 'path';
 import RuntimeInterface from './runtime-interface';
-
+import * as path from "path";
 
 /**
  * This interface describes the mock-debug specific launch attributes
@@ -26,6 +26,8 @@ interface LaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
   port?: number;
 
   txHash: string;
+
+  files: string[];
 }
 
 class SolidityDebugSession extends DebugSession {
@@ -125,12 +127,10 @@ class SolidityDebugSession extends DebugSession {
     this.sendResponse(response);
 
     // start the program in the runtime
-    await this._runtime.attach(args.host || "127.0.0.1", args.port || 8455);
+    await this._runtime.attach(args.txHash, args.files.map((file) => path.normalize(file)));
   }
 
   protected async disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments) {
-    this._runtime.disconnect();
-
     this.sendResponse(response);
   }
 

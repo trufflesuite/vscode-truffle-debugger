@@ -22,11 +22,17 @@
     "Debuggers"
   ],
   "dependencies": {
+    "fs-extra": "^7.0.1",
     "path": "^0.12.7",
+    "truffle-box": "^1.0.13",
+    "truffle-debug-utils": "^1.0.8",
     "truffle-debugger": "4.1.0-beta.2",
+    "truffle-migrate": "^3.0.3",
+    "truffle-workflow-compile": "^2.0.3",
     "vscode": "^1.1.6",
     "vscode-debugadapter": "^1.25.0",
     "vscode-debugprotocol": "^1.25.0",
+    "web3": "^1.0.0-beta.37",
     "ws": "4.0.0"
   },
   "devDependencies": {

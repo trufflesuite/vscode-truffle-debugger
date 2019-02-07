@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import Debugger from 'truffle-debugger';
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { TruffleDebuggerTypes } from "./debugger-types";
+import { prepareContracts } from "./helpers";
 
 const uuidv4 = require("uuid").v4;
 
@@ -79,7 +80,8 @@ export default class RuntimeInterface extends EventEmitter {
   public async evaluate(expression: string, context: string | undefined, frameId: number | undefined): Promise<any> {
   }
 
-  public async attach(txHash: string): Promise<void> {
+  public async attach(txHash: string, files: string[]): Promise<void> {
+
     let bugger = await Debugger.forTx(txHash, { provider, files, contracts });
 
     this._session = bugger.connect();

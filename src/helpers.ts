@@ -8,7 +8,7 @@ import Migrate from "truffle-migrate";
 import Box from "truffle-box";
 import Resolver from "truffle-resolver";
 
-export async function prepareContracts(provider, sources = {}, migrations) {
+export async function prepareContracts(provider, sources = {}, migrations?) {
   let config = await createSandbox();
 
   let accounts = await getAccounts(provider);

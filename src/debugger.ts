@@ -7,6 +7,7 @@ import {
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { basename } from 'path';
 import RuntimeInterface from './runtime-interface';
+import { TruffleDebuggerTypes } from "./debugger-types";
 import * as path from "path";
 
 /**
@@ -28,6 +29,8 @@ interface LaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
   txHash: string;
 
   files: string[];
+
+  providerUrl: string;
 }
 
 class SolidityDebugSession extends DebugSession {
@@ -78,8 +81,8 @@ class SolidityDebugSession extends DebugSession {
     this._runtime.on('stopOnException', () => {
       this.sendEvent(new StoppedEvent('exception', SolidityDebugSession.THREAD_ID));
     });
-    this._runtime.on('breakpointValidated', (bp: LibSdbTypes.Breakpoint) => {
-      this.sendEvent(new BreakpointEvent('changed', <DebugProtocol.Breakpoint>{ verified: bp.verified, id: bp.id }));
+    this._runtime.on('breakpointValidated', (bp: TruffleDebuggerTypes.Breakpoint) => {
+      this.sendEvent(new BreakpointEvent('changed', <DebugProtocol.Breakpoint>{ verified: true, id: bp.id }));
     });
     this._runtime.on('output', (text, filePath, line, column) => {
       const e: DebugProtocol.OutputEvent = new OutputEvent(`${text}\n`);
@@ -127,7 +130,7 @@ class SolidityDebugSession extends DebugSession {
     this.sendResponse(response);
 
     // start the program in the runtime
-    await this._runtime.attach(args.txHash, args.files.map((file) => path.normalize(file)));
+    await this._runtime.attach(args.providerUrl, args.txHash, args.files.map((file) => path.normalize(file)));
   }
 
   protected async disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments) {
@@ -140,7 +143,7 @@ class SolidityDebugSession extends DebugSession {
     const clientLines = args.lines || [];
 
     // clear all breakpoints for this file
-    await this._runtime.clearBreakpoints(path);
+    await this._runtime.clearBreakpoints();
 
     // set and verify breakpoint locations
     let actualBreakpoints: DebugProtocol.Breakpoint[] = [];
@@ -148,7 +151,7 @@ class SolidityDebugSession extends DebugSession {
       const l = clientLines[i];
       const debuggerBreakpoint = await this._runtime.setBreakpoint(path, this.convertClientLineToDebugger(l));
       if (debuggerBreakpoint) {
-        const bp = <DebugProtocol.Breakpoint>new Breakpoint(debuggerBreakpoint.verified, this.convertDebuggerLineToClient(debuggerBreakpoint.line));
+        const bp = <DebugProtocol.Breakpoint>new Breakpoint(true, this.convertDebuggerLineToClient(debuggerBreakpoint.line));
         bp.id = debuggerBreakpoint.id;
         actualBreakpoints.push(bp);
       }

@@ -1,10 +1,11 @@
 import { EventEmitter } from "events";
-import Debugger from 'truffle-debugger';
+import Debugger from "truffle-debugger";
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { TruffleDebuggerTypes } from "./debugger-types";
 import { prepareContracts } from "./helpers";
+import * as fs from "fs";
 
-const uuidv4 = require("uuid").v4;
+const Web3 = require("web3");
 
 export default class RuntimeInterface extends EventEmitter {
   private _session: any;
@@ -15,6 +16,10 @@ export default class RuntimeInterface extends EventEmitter {
 
   private _selectors: any;
 
+  private _provider: any;
+
+  private _numBreakpoints;
+
   //private _debuggerMessages: Map<string, Function | undefined>;
 
   constructor() {
@@ -23,6 +28,7 @@ export default class RuntimeInterface extends EventEmitter {
     //this._debuggerMessages = new Map<string, Function | undefined>();
 
     this._selectors = Debugger.selectors();
+    this._numBreakpoints = 0;
   }
 
   public async clearBreakpoints(): Promise<void> {
@@ -40,9 +46,12 @@ export default class RuntimeInterface extends EventEmitter {
     let sourceId = matchingSources[0].id;
 
     breakpoint = {
+      id: this._numBreakpoints,
       sourceId,
       line
     };
+
+    this._numBreakpoints++;
 
     this._session.addBreakpoint(breakpoint);
 
@@ -80,9 +89,25 @@ export default class RuntimeInterface extends EventEmitter {
   public async evaluate(expression: string, context: string | undefined, frameId: number | undefined): Promise<any> {
   }
 
-  public async attach(txHash: string, files: string[]): Promise<void> {
+  public async attach(providerUrl: string, txHash: string, filePaths: string[]): Promise<void> {
+    this._provider = new Web3(providerUrl);
 
-    let bugger = await Debugger.forTx(txHash, { provider, files, contracts });
+    this._sources = Object.assign(
+      {},
+      ...filePaths.map((file) => {
+        // read each file, need to return object with file as key
+        return {
+          [file]: fs.readFileSync(file, { encoding: "utf8" })
+        };
+      })
+    );
+
+    let { artifacts: contracts, files }: any = await prepareContracts(
+      this._provider,
+      this._sources
+    );
+
+    let bugger = await Debugger.forTx(txHash, { provider: this._provider, files, contracts });
 
     this._session = bugger.connect();
   }

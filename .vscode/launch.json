@@ -17,12 +17,12 @@
       "request": "launch",
       "name": "Server",
       "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}/src/sdbDebug.ts",
+      "program": "${workspaceFolder}/src/debugger.ts",
       "args": [ "--server=4711" ],
       "outFiles": [ "${workspaceFolder}/out/**/*.js" ]
     },
     {
-      "type": "sdb",
+      "type": "truffle-debugger",
       "request": "launch",
       "name": "Debug Solidity",
       // "debugServer": 4711,
@@ -47,7 +47,7 @@
       "configurations": [ "Extension", "Server" ]
     },
     {
-      "name": "SDB + Test",
+      "name": "Debugger + Test",
       "configurations": [ "Debug Solidity", "Tests" ]
     }
   ]

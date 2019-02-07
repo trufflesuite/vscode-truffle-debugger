@@ -9,14 +9,14 @@ import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken 
 
 export function activate(context: vscode.ExtensionContext) {
 	// register a configuration provider for 'sdb' debug type
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider("sdb", new SdbConfigurationProvider()));
+	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider("truffle-debugger", new TruffleDebuggerConfigurationProvider()));
 }
 
 export function deactivate() {
 	// nothing to do
 }
 
-class SdbConfigurationProvider implements vscode.DebugConfigurationProvider {
+class TruffleDebuggerConfigurationProvider implements vscode.DebugConfigurationProvider {
 
 	/**
 	 * Massage a debug configuration just before a debug session is being launched,

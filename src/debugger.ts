@@ -143,7 +143,7 @@ class SolidityDebugSession extends DebugSession {
     const clientLines = args.lines || [];
 
     // clear all breakpoints for this file
-    await this._runtime.clearBreakpoints();
+    await this._runtime.clearBreakpoints(); // TODO: this will break for multiple file projects lul
 
     // set and verify breakpoint locations
     let actualBreakpoints: DebugProtocol.Breakpoint[] = [];
@@ -177,16 +177,19 @@ class SolidityDebugSession extends DebugSession {
 
   protected async stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): Promise<void> {
 
-    const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
-    const maxLevels = typeof args.levels === 'number' ? args.levels : 1000;
-    const endFrame = startFrame + maxLevels;
+    // const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
+    // const maxLevels = typeof args.levels === 'number' ? args.levels : 1000;
+    // const endFrame = startFrame + maxLevels;
 
-    const stk = await this._runtime.stack(startFrame, endFrame);
+    // const stk = await this._runtime.stack(startFrame, endFrame);
+    let frame: TruffleDebuggerTypes.Frame = this._runtime.currentLine();
 
-    if (stk !== null) {
+    if (frame !== null) {
       response.body = {
-        stackFrames: stk.frames.map(f => new StackFrame(f.index, f.name, this.createSource(f.file), this.convertDebuggerLineToClient(f.line))),
-        totalFrames: stk.count
+        stackFrames: [
+          new StackFrame(0, "Current Line", this.createSource(frame.file), this.convertDebuggerLineToClient(frame.line), frame.column)
+        ],
+        totalFrames: 1
       };
     }
     else {

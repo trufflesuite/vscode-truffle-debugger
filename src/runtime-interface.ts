@@ -66,24 +66,30 @@ export default class RuntimeInterface extends EventEmitter {
 
   public async continue(): Promise<void> {
     this._session.continueUntilBreakpoint();
+    this.sendEvent("stopOnBreakpoint");
   }
 
   public async continueReverse(): Promise<void> {
+    this.sendEvent("stopOnBreakpoint");
   }
 
   public async stepOver(): Promise<void> {
     this._session.stepOver();
+    this.sendEvent("stopOnStepOver");
   }
 
   public async stepBack(): Promise<void> {
+    this.sendEvent("stopOnStepOver");
   }
 
   public async stepIn(): Promise<void> {
     this._session.stepInto();
+    this.sendEvent("stopOnStepIn");
   }
 
   public async stepOut(): Promise<void> {
     this._session.stepOut();
+    this.sendEvent("stopOnStepOut");
   }
 
   public async evaluate(expression: string, context: string | undefined, frameId: number | undefined): Promise<any> {
@@ -110,6 +116,16 @@ export default class RuntimeInterface extends EventEmitter {
     let bugger = await Debugger.forTx(txHash, { provider: this._provider, files, contracts });
 
     this._session = bugger.connect();
+  }
+
+  public currentLine(): TruffleDebuggerTypes.Frame {
+    const currentInstruction: any = this._session.view(this._selectors.solidity.current.instruction);
+
+    return {
+      file: this._session.view(this._selectors.solidity.current.source).sourcePath,
+      line: currentInstruction.range ? currentInstruction.range.start.line : 0,
+      column: currentInstruction.range ? currentInstruction.range.start.column : 0
+    }
   }
 
   public sendEvent(event: string, ...args: any[]) {

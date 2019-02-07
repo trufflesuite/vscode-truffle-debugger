@@ -83,10 +83,20 @@
                 "description": "Enable logging of the Debug Adapter Protocol.",
                 "default": true
               },
-              "port": {
-                "type": "number",
-                "description": "This is the port that is used to communicate with TestRPC/Ganache-Core",
-                "default": 8455
+              "txHash": {
+                "type": "string",
+                "description": "Transaction hash to debug",
+                "default": "0x"
+              },
+              "files": {
+                "type": "string[]",
+                "description": "Array of file paths of solidity files to debug",
+                "default": []
+              },
+              "providerUrl": {
+                "type": "string",
+                "description": "URL of provider",
+                "default": "http://127.0.0.1:8545"
               }
             }
           }
@@ -97,7 +107,9 @@
             "request": "launch",
             "name": "Debug Transaction with Truffle",
             "stopOnEntry": false,
-            "port": 8455
+            "txHash": "0x",
+            "files": [],
+            "providerUrl": "http://127.0.0.1:8545"
           }
         ],
         "configurationSnippets": [
@@ -107,9 +119,11 @@
             "body": {
               "type": "truffle-debugger",
               "request": "launch",
-              "name": "Debug Solidity",
+              "name": "Debug Transaction with Truffle",
               "stopOnEntry": false,
-              "port": 8455
+              "txHash": "0x",
+              "files": [],
+              "providerUrl": "http://127.0.0.1:8545"
             }
           }
         ],

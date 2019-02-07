@@ -1,12 +1,12 @@
 import * as path from "path";
-import fs from "fs-extra";
-import Contracts from "truffle-workflow-compile";
-import Debug from "truffle-debug-utils";
-import Artifactor from "truffle-artifactor";
-import Web3 from "web3";
-import Migrate from "truffle-migrate";
-import Box from "truffle-box";
-import Resolver from "truffle-resolver";
+const fs = require("fs-extra");
+const Contracts = require("truffle-workflow-compile");
+const Debug = require("truffle-debug-utils");
+const Artifactor = require("truffle-artifactor");
+const Web3 = require("web3");
+const Migrate = require("truffle-migrate");
+const Box = require("truffle-box");
+const Resolver = require("truffle-resolver");
 
 export async function prepareContracts(provider, sources = {}, migrations?) {
   let config = await createSandbox();
@@ -22,7 +22,7 @@ export async function prepareContracts(provider, sources = {}, migrations?) {
 
   config.compilers = {
     solc: {
-      version: "0.5.1",
+      version: "0.4.24",
       settings: {
         optimizer: { enabled: false, runs: 200 },
         evmVersion: "byzantium"
@@ -33,13 +33,6 @@ export async function prepareContracts(provider, sources = {}, migrations?) {
   await addContracts(config, sources);
   let { contracts, files }: any = await compile(config);
   let contractNames = Object.keys(contracts);
-
-  if (!migrations) {
-    migrations = await defaultMigrations(contractNames);
-  }
-
-  await addMigrations(config, migrations);
-  await migrate(config);
 
   let artifacts = await gatherArtifacts(config);
 

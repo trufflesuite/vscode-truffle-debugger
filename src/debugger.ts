@@ -23,8 +23,6 @@ interface LaunchRequestArguments extends DebugProtocol.LaunchRequestArguments {
   trace?: boolean;
   /** change which host talks to sdb **/
   host?: string;
-  /** change which port talks to sdb **/
-  port?: number;
 
   txHash: string;
 
@@ -131,6 +129,8 @@ class SolidityDebugSession extends DebugSession {
 
     // start the program in the runtime
     await this._runtime.attach(args.providerUrl, args.txHash, args.files.map((file) => path.normalize(file)));
+
+    this.sendEvent(new StoppedEvent('breakpoint', SolidityDebugSession.THREAD_ID));
   }
 
   protected async disconnectRequest(response: DebugProtocol.DisconnectResponse, args: DebugProtocol.DisconnectArguments) {

@@ -1,11 +1,11 @@
 import { EventEmitter } from "events";
-import Debugger from "truffle-debugger";
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { TruffleDebuggerTypes } from "./debugger-types";
 import { prepareContracts } from "./helpers";
 import * as fs from "fs";
 
 const Web3 = require("web3");
+const Debugger = require("truffle-debugger");
 
 export default class RuntimeInterface extends EventEmitter {
   private _session: any;
@@ -16,7 +16,7 @@ export default class RuntimeInterface extends EventEmitter {
 
   private _selectors: any;
 
-  private _provider: any;
+  private _web3: any;
 
   private _numBreakpoints;
 
@@ -27,12 +27,12 @@ export default class RuntimeInterface extends EventEmitter {
 
     //this._debuggerMessages = new Map<string, Function | undefined>();
 
-    this._selectors = Debugger.selectors();
+    this._selectors = Debugger.selectors;
     this._numBreakpoints = 0;
   }
 
   public async clearBreakpoints(): Promise<void> {
-    this._session.removeAllBreakpoints();
+    //this._session.removeAllBreakpoints();
   }
 
   public async setBreakpoint(path: string, line: number): Promise<TruffleDebuggerTypes.Breakpoint> {
@@ -96,7 +96,8 @@ export default class RuntimeInterface extends EventEmitter {
   }
 
   public async attach(providerUrl: string, txHash: string, filePaths: string[]): Promise<void> {
-    this._provider = new Web3(providerUrl);
+    this._web3 = new Web3();
+    this._web3.setProvider(new Web3.providers.HttpProvider(providerUrl));
 
     this._sources = Object.assign(
       {},
@@ -109,13 +110,14 @@ export default class RuntimeInterface extends EventEmitter {
     );
 
     let { artifacts: contracts, files }: any = await prepareContracts(
-      this._provider,
+      this._web3.currentProvider,
       this._sources
     );
 
-    let bugger = await Debugger.forTx(txHash, { provider: this._provider, files, contracts });
+    let bugger = await Debugger.forTx(txHash, { provider: this._web3.currentProvider, files, contracts });
 
-    this._session = bugger.connect();
+    this._session = await bugger.connect();
+    console.log("Session ready");
   }
 
   public currentLine(): TruffleDebuggerTypes.Frame {

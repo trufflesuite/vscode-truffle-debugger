@@ -15,8 +15,7 @@
     "truffle"
   ],
   "engines": {
-    "vscode": "^1.17.0",
-    "node": "^7.9.0"
+    "vscode": "^1.17.0"
   },
   "categories": [
     "Debuggers"

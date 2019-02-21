@@ -127,7 +127,7 @@ export default class RuntimeInterface extends EventEmitter {
       file: this._session.view(this._selectors.solidity.current.source).sourcePath,
       line: currentInstruction.range ? currentInstruction.range.start.line : 0,
       column: currentInstruction.range ? currentInstruction.range.start.column : 0
-    }
+    };
   }
 
   public sendEvent(event: string, ...args: any[]) {

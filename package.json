@@ -1,5 +1,5 @@
 {
-  "name": "vscode-truffle-debugger",
+  "name": "vscode-truffle",
   "displayName": "Truffle Debugger for VS Code",
   "version": "1.0.0-alpha.0",
   "publisher": "Truffle Suite",
@@ -15,32 +15,35 @@
     "truffle"
   ],
   "engines": {
-    "vscode": "^1.17.0"
+    "vscode": "^1.29.0"
   },
   "categories": [
     "Debuggers"
   ],
   "dependencies": {
+    "ethers": "^4.0.26",
     "fs-extra": "^7.0.1",
     "path": "^0.12.7",
     "truffle-box": "^1.0.13",
+    "truffle-config": "^1.1.4",
     "truffle-debug-utils": "^1.0.8",
     "truffle-debugger": "^4.1.0-beta.2",
     "truffle-migrate": "^3.0.3",
     "truffle-workflow-compile": "^2.0.3",
-    "vscode": "^1.1.6",
-    "vscode-debugadapter": "^1.25.0",
-    "vscode-debugprotocol": "^1.25.0",
+    "vscode": "^1.1.29",
+    "vscode-debugadapter": "^1.33.0",
+    "vscode-debugprotocol": "^1.33.0",
     "web3": "^1.0.0-beta.37",
     "ws": "4.0.0"
   },
   "devDependencies": {
     "@types/node": "^8.0.54",
+    "@types/web3": "^1.0.18",
     "@types/ws": "^4.0.1",
     "tslint": "^5.8.0",
     "typescript": "^2.5.3",
     "vsce": "^1.34.0",
-    "vscode-debugadapter-testsupport": "^1.25.0"
+    "vscode-debugadapter-testsupport": "^1.33.0"
   },
   "scripts": {
     "prepublish": "tsc -p ./src",
@@ -54,9 +57,16 @@
   },
   "main": "./out/src/extension",
   "activationEvents": [
-    "onDebug"
+    "onDebug",
+    "onCommand:extension.truffle.debugTransaction"
   ],
   "contributes": {
+    "commands": [
+      {
+        "command": "extension.truffle.debugTransaction",
+        "title": "Truffle: Debug Transaction"
+      }
+    ],
     "breakpoints": [
       {
         "language": "solidity"
@@ -64,7 +74,7 @@
     ],
     "debuggers": [
       {
-        "type": "truffle-debugger",
+        "type": "truffle",
         "label": "Truffle Debugger",
         "program": "./out/src/debugger.js",
         "runtime": "node",
@@ -102,7 +112,7 @@
         },
         "initialConfigurations": [
           {
-            "type": "truffle-debugger",
+            "type": "truffle",
             "request": "launch",
             "name": "Debug Transaction with Truffle",
             "stopOnEntry": false,
@@ -114,9 +124,9 @@
         "configurationSnippets": [
           {
             "label": "Truffle Debugger: Launch",
-            "description": "Runs the Truffle debugger (truffle-debugger) and attaches to a TestRPC instance",
+            "description": "Runs the Truffle debugger (truffle) and attaches to a TestRPC instance",
             "body": {
-              "type": "truffle-debugger",
+              "type": "truffle",
               "request": "launch",
               "name": "Debug Transaction with Truffle",
               "stopOnEntry": false,

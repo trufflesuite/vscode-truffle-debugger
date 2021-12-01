@@ -1,3 +1,9 @@
+# ❎❎❎ !!!This Repo is now archived!!! ❎❎❎
+
+Stay tuned for more news in this space...
+
+____
+
 This is a proof of concept repo for supporting Truffle Debugger in VS Code
 
 The author of this repository, verified by this commit, is @seesemichaelj, who has authorized on behalf of SeesePlusPlus LLC to use the codebase of https://github.com/seeseplusplus/vscode-velma-debug (which is under the MIT License) as a starting point for this repository.
